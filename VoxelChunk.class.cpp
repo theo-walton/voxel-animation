@@ -45,6 +45,8 @@ void	VoxelChunk::UseMatrix(glm::mat4 m)
 
 void	VoxelChunk::Load(void)
 {
+	RemoveHiddenSides();
+	
 	glGenBuffers(1, &_bufferID);
 	glBindBuffer(GL_ARRAY_BUFFER, _bufferID);
 	glBufferData(GL_ARRAY_BUFFER,
@@ -76,6 +78,50 @@ glm::mat4	&VoxelChunk::GetTransform(void)
 glm::vec3	VoxelChunk::Pos(void)
 {
 	return _pos;
+}
+
+void	VoxelChunk::RemoveHiddenSides(void)
+{
+	const int top =		0b00000001000000000000000000000000;
+	const int bot =		0b00000010000000000000000000000000;
+	const int left =	0b00000100000000000000000000000000;
+	const int right =	0b00001000000000000000000000000000;
+	const int front =	0b00010000000000000000000000000000;
+	const int back =	0b00100000000000000000000000000000;
+
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			for (int z = 0; z < 10; z++)
+			{
+				if (IsBlock(x + 1, y, z))
+				{
+					_array[x + y * size + z * size * size] |= right;
+				}
+				if (IsBlock(x - 1, y, z))
+				{
+					_array[x + y * size + z * size * size] |= left;
+				}
+				if (IsBlock(x, y + 1, z))
+				{
+					_array[x + y * size + z * size * size] |= top;
+				}
+				if (IsBlock(x, y - 1, z))
+				{
+					_array[x + y * size + z * size * size] |= bot;
+				}
+				if (IsBlock(x, y, z + 1))
+				{
+					_array[x + y * size + z * size * size] |= back;
+				}
+				if (IsBlock(x, y, z - 1))
+				{
+					_array[x + y * size + z * size * size] |= front;
+				}						
+			}
+		}
+	}
 }
 
 void	VoxelChunk::print(void)

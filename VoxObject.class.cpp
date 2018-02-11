@@ -147,25 +147,17 @@ VoxObject::AnimatedChunk	VoxObject::getAnimatedChunk(std::string &format)
 	
 	ac.animaTransform = getAnimaTransform(format);
 
-	std::cout << "test2" <<	std::endl;
-	
 	i = format.find("Time:") + 5;
 	format.erase(0, i);
 	ac.animaTime = getAnimaTime(format);
 
-	std::cout << "test3" <<	std::endl;
-	
 	i = format.find("Chunk:") + 6;
 	format.erase(0, i);
 	ac.chunk = getChunk(format);
 
-	std::cout << "test4" <<	std::endl;
-	
 	i = format.find("Cycle:") + 6;
 	format.erase(0, i);
 	ac.animaCycle = getAnimaCycle(format);
-
-	std::cout << "test5" << std::endl;
 
 	i = format.find("Chunk Position:") + 15;
 	format.erase(0, i);
@@ -178,6 +170,8 @@ VoxObject::VoxObject(std::string filepath)
 {
 	_totalTime = 0;
 	_pos = glm::vec3(0, 0, 0);
+	_transform = glm::mat4(1);
+	
 	std::string format = ReadFile(filepath);
 
 	while (format.length())
@@ -212,8 +206,6 @@ glm::mat4	VoxObject::ExtrapolateMatrix(AnimatedChunk part)
 	else
 		b = part.animaCycle - part.animaTime[i];
 
-	std::cout << cycleTime << " " << i << std::endl;
-	
 	float ratio = a / b;
 
 	glm::mat4 x = part.animaTransform[i];
@@ -235,10 +227,12 @@ void	VoxObject::Render(void)
 	{
 
 		glm::mat4 matrix = ExtrapolateMatrix(_parts[i]);
-		glm::mat4 translate = glm::translate(_pos + _parts[i].chunkPos);
-
-		matrix = translate * matrix * _parts[i].relativeTransform;
+		glm::mat4 translate1 = glm::translate(_parts[i].chunkPos);
+		glm::mat4 translate2 = glm::translate(_pos);
 		
+		matrix = translate2 * _transform * translate1 *
+			matrix * _parts[i].relativeTransform;
+
 		_parts[i].chunk->UseMatrix( matrix );
          	glUniformMatrix4fv(_transformID,				   
 				   1,
@@ -265,6 +259,33 @@ void	VoxObject::Unload(void)
 		_parts[i].chunk->Unload();
 	}
 }
+
+void    VoxObject::SetTransform(glm::mat4 m)
+{
+        _transform = m;
+}
+
+glm::mat4       VoxObject::GetTransform(void)
+{
+        return _transform;
+}
+
+void    VoxObject::SetPos(glm::vec3 p)
+{
+        _pos = p;
+}
+
+glm::vec3       VoxObject::GetPos(void)
+{
+        return _pos;
+}
+
+//ALL FUNCTIONS FROM HERE ONWARDS SHOULD NOT BE USED UNLESS YOU REALLY
+//KNOW WHAT YOU ARE DOING
+
+//DO NOT DEFINE UNLESS YOU PLAN TO USE THESE FUNCTIONS
+
+#ifdef _VOXOBJECT_EDITOR
 
 int	VoxObject::TotalParts(void)
 {
@@ -294,10 +315,9 @@ void	VoxObject::Move(glm::vec3 amount, int part, int index)
 	m = translate * m;
 }
 
-void	VoxObject::ToFile(std::string filepath)
-{
-	
-}
+#endif
+
+#ifdef _VOXOBJECT_DEBUG
 
 void	VoxObject::print(void)
 {
@@ -307,3 +327,5 @@ void	VoxObject::print(void)
 		std::cout << std::endl << std::endl << std::endl;
 	}
 }
+
+#endif

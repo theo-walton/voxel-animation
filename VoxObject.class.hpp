@@ -3,7 +3,6 @@
 
 #include "voxGL.hpp"
 
-
 class	VoxObject
 {
 	struct AnimatedChunk
@@ -27,7 +26,12 @@ private:
 	float _totalTime;
 	GLuint _transformID;
 
+	//the world position of the object
 	glm::vec3 _pos;
+
+	//transform matrix will be applied before object is translated
+	//so you can use simple rotation matricies to rotate object
+	glm::mat4 _transform;
 
 	std::string	ReadFile(std::string);
 
@@ -50,14 +54,30 @@ public:
 	void	Load(void);
 	void	Unload(void);
 	
-	int	TotalParts(void);
-	int	TotalAnima(int part);
+        void    SetTransform(glm::mat4);
+        glm::mat4       GetTransform(void);
+        void    SetPos(glm::vec3);
+        glm::vec3       GetPos(void);
+
+
 	
-	void	Rotate(glm::vec3 axis, float angle, int part, int index);
-	void	Move(glm::vec3 amount, int part, int index);
-	void	ToFile(std::string filepath);
+//these functions should not be used	
+#ifdef _VOXOBJECT_EDITOR
+/**/	
+/**/	int	TotalParts(void);
+/**/	int	TotalAnima(int part);
+/**/	
+/**/	void	Rotate(glm::vec3 axis, float angle, int part, int index);
+/**/	void	Move(glm::vec3 amount, int part, int index);
+#endif
 	
-	void	print(void);
+//same for these functions	
+#ifdef _VOXOBJECT_DEBUG
+/**/	
+/**/	void	print(void);
+/**/
+#endif
+	
 };
 
 #endif

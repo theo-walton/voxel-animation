@@ -43,10 +43,12 @@ int	main(int ac, char **av)
 
 	VoxRenderer renderer(program);
 	VoxObject test(av[1]);
-
+	
 	test.Load();
-	test.print();
 	renderer.AttachObject(&test);
+	
+	test.SetPos(glm::vec3(0, 0, 100));
+	test.SetTransform(glm::rotate(glm::radians(90.0f), glm::vec3(0, 1.0f, 0)));
 	
 	while (window.IsOpen())
 	{
