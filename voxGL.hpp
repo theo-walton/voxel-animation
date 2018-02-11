@@ -20,7 +20,8 @@
 #include "Window.class.hpp"
 #include "ShadingProgram.class.hpp"
 #include "VoxelChunk.class.hpp"
-#include "VoxelMap.class.hpp"
+#include "VoxObject.class.hpp"
+#include "VoxRenderer.class.hpp"
 #include "Camera.class.hpp"
 
 #define X_DIM 800

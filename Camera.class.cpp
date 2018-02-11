@@ -33,6 +33,12 @@ void	Camera::Move(glm::vec3 amount)
 	_cameraShouldMove = true;
 }
 
+void	Camera::Rotate(glm::vec3 axis, float degrees)
+{
+	_transform = glm::rotate(_transform, glm::radians(degrees), axis);
+	_cameraShouldMove = true;	
+}
+
 void	Camera::TrackEvents(Window *window)
 {
 	_window = window;
@@ -69,6 +75,22 @@ void	Camera::Update(void)
 	if (_window->IsDown())
 	{
 		Move(-Up * deltaTime);
+	}
+	if (_window->KeyOn('N'))
+	{
+		Rotate(glm::vec3(0, 0, -1), 0.5);
+	}
+	if (_window->KeyOn('M'))
+	{
+		Rotate(glm::vec3(0, 0, 1), 0.5);
+	}
+	if (_window->KeyOn('J'))
+	{
+		Rotate(glm::vec3(0, -1, 0), 0.5);
+	}
+	if (_window->KeyOn('K'))
+	{
+		Rotate(glm::vec3(0, 1, 0), 0.5);
 	}
 	
 	if (_cameraShouldMove)

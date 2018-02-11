@@ -7,4 +7,4 @@ draws voxel chunks (10x10x10 voxels) that are attached to a voxelmap... but they
 
 Currently a graphical with shape boundaries.
 
-![alt text](https://raw.githubusercontent.com/theo-walton/VoxelEngine/master/voxelSphere)
+![alt text](https://raw.githubusercontent.com/theo-walton/VoxelEngine/master/images/voxelSphere)

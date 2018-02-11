@@ -2,19 +2,21 @@
 
 in VertexData {
 	vec4 normal;
+	vec3 color;
 } VertexIn;
 
-out vec4 color;
+out vec3 color;
 
 void	main()
 {
 
-	float dot = dot( VertexIn.normal, normalize(vec4(-1, -2, -3, 0)) );
+	float dot = dot( normalize(VertexIn.normal), normalize(vec4(-1, -2, -3, 0)) );
+
 	if (dot < 0.1)
 	{
-		color = vec4(0.1, 0.1, 0, 1);
+		color = VertexIn.color * 0.1;
 		return;
 	}
 
-	color = vec4(dot, dot, 0, 1);
+	color = VertexIn.color * dot;
 }

@@ -17,6 +17,18 @@ void	VoxelMap::AddChunk(VoxelChunk *chunk)
 	_chunks.push_back(chunk);	
 }
 
+void	VoxelMap::RemoveChunks(std::function<bool(glm::vec3, glm::vec3)> &f, glm::vec3 v)
+{
+	for (int i = 0; i < _chunks.size(); i++)
+	{
+		if ( f(_chunks[i]->Pos(), v))
+		{
+			_chunks[i]->Unload();
+			_chunks.erase(_chunks.begin() + i);
+		}
+	}
+}
+
 void	VoxelMap::Render(void)
 {
 	GLuint id;

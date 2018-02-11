@@ -5,6 +5,14 @@ VoxelChunk::VoxelChunk(void)
 {
 }
 
+VoxelChunk::VoxelChunk(int arr[])
+{
+	for (int i = 0; i < size * size * size; i++)
+	{
+		_array[i] = arr[i];
+	}
+}
+
 VoxelChunk::VoxelChunk(const std::function<int(int, int)> &f)
 {
 	for (int i = 0; i < size * size * size; i++)
@@ -26,6 +34,13 @@ int	&VoxelChunk::Item(int i)
 void	VoxelChunk::ApplyMatrix(glm::mat4 m)
 {
 	_transform *= m;
+	_pos = glm::vec3(glm::vec4(_pos, 1) * m);
+}
+
+void	VoxelChunk::UseMatrix(glm::mat4 m)
+{
+	_transform = m;
+	_pos = glm::vec3(glm::vec4(_pos, 1) * m);
 }
 
 void	VoxelChunk::Load(void)
@@ -56,4 +71,27 @@ void	VoxelChunk::Unload(void)
 glm::mat4	&VoxelChunk::GetTransform(void)
 {
 	return _transform;
+}
+
+glm::vec3	VoxelChunk::Pos(void)
+{
+	return _pos;
+}
+
+void	VoxelChunk::print(void)
+{
+	for (int i = 0; i < 1000; i++)
+	{
+		std::cout << _array[i] << " ";
+	}
+
+	std::cout << std::endl << "matrix:" << std::endl;
+	for (int i = 0; i < 4; i++)
+	{
+		for (int j = 0; j < 4; j++)
+		{
+			std::cout << _transform[i][j] << " ";
+		}
+		std::cout << std::endl;
+	}
 }

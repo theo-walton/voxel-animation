@@ -76,10 +76,10 @@ void	Window::KeyCallback(GLFWwindow *glfwWindow, int key, int scancode, int acti
 
 	if (action == GLFW_PRESS)
 	{
-		window->KeyOn(key);
+		window->KeyOn(key) = true;
 	}
 	else if (action == GLFW_RELEASE)
-		window->KeyOff(key);
+		window->KeyOn(key) = false;
 }
 
 void	Window::ErrorCallback(int error, const char *description)
@@ -87,14 +87,9 @@ void	Window::ErrorCallback(int error, const char *description)
 	std::cerr << description << std::endl;
 }
 
-void	Window::KeyOn(int key)
+bool	&Window::KeyOn(int key)
 {
-	_keyHeld[key] = true;
-}
-
-void	Window::KeyOff(int key)
-{
-	_keyHeld[key] = false;
+	return _keyHeld[key];
 }
 
 void	Window::ForwardAndBackKeys(int forward, int backward)

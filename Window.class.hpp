@@ -35,9 +35,8 @@ public:
 	void	Update(void);
 	void	Clear(void);
 	
-	void	EventListen(void);	
-	void	KeyOn(int);
-	void	KeyOff(int);
+	void	EventListen(void);
+	bool	&KeyOn(int);
 	
 	void	ForwardAndBackKeys(int forward, int back);
 	void	LeftAndRightKeys(int left, int right);

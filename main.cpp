@@ -14,8 +14,11 @@ int	chunkFun(int index, int size)
 	return 0;
 }
 
-int	main(void)
+int	main(int ac, char **av)
 {
+
+	if (ac == 1)
+		return (1);
 	
 	Window window(X_DIM, Y_DIM, NAME);
 	ShadingProgram program("vertex.glsl",
@@ -37,12 +40,13 @@ int	main(void)
 	window.UpAndDownKeys('Z', 'X');
 	
 	camera.TrackEvents(&window);
-	
-	VoxelChunk chunk(chunkFun);
-	VoxelMap map(program);
 
-	chunk.Load();
-	map.AddChunk(&chunk);
+	VoxRenderer renderer(program);
+	VoxObject test(av[1]);
+
+	test.Load();
+	test.print();
+	renderer.AttachObject(&test);
 	
 	while (window.IsOpen())
 	{
@@ -50,10 +54,10 @@ int	main(void)
 		camera.Update();
 		if (camera.JustMoved())
 		{
-			map.NewPerspective(camera.Perspective());
-			map.UsePerspective();
+			renderer.NewPerspective(camera.Perspective());
+			renderer.UsePerspective();
 		}
-		map.Render();
+		renderer.Render();
 		window.Update();
 
 		GLenum err;

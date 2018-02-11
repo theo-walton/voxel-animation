@@ -1,9 +1,9 @@
-#ifndef VOXELMAP_CLASS_HPP
-#define VOXELMAP_CLASS_HPP
+#ifndef VOXRENDERER_CLASS_HPP
+#define VOXRENDERER_CLASS_HPP
 
 #include "voxGL.hpp"
 
-class VoxelMap
+class	VoxRenderer
 {
 private:
 
@@ -14,13 +14,13 @@ private:
 	GLuint _transformID;
 	glm::mat4 _perspective;
 	GLint _numlist[size];
-	std::vector<VoxelChunk*> _chunks;
+	std::vector<VoxObject*> _objects;
 
 public:
 
-	VoxelMap(ShadingProgram &program);
-	
-	void	AddChunk(VoxelChunk *chunk);
+	VoxRenderer(ShadingProgram &program);
+
+	void	AttachObject(VoxObject *object);
 	void	Render(void);
 	void	NewPerspective(glm::mat4);
 	void	UsePerspective(void);

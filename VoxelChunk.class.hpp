@@ -12,12 +12,14 @@ private:
 	GLuint _bufferID;
 	GLint _array[size * size * size] = {};		
 	glm::mat4 _transform;
+	glm::vec3 _pos;
 	
 	
 	
 public:
 
 	VoxelChunk(void);
+	VoxelChunk(int[]);
 	VoxelChunk(const std::function<int(int, int)> &f);
 
 	//access _array like a triple array
@@ -28,6 +30,8 @@ public:
 	
 	void	ApplyMatrix(glm::mat4);
 
+	void	UseMatrix(glm::mat4);
+	
 	void	Load(void);
 
 	void	Render(void);
@@ -35,6 +39,10 @@ public:
 	void	Unload(void);
 
 	glm::mat4	&GetTransform(void);
+
+	glm::vec3	Pos(void);
+
+	void	print(void);
 };
 
 //stores a 10/10/10 array of ints and a transform matrix

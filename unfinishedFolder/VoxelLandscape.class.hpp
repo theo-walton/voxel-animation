@@ -8,10 +8,12 @@ class VoxelLandscape
 private:
 
 	glm::vec3 _center;
+	VoxelMap *_map;
+	int _seed;
 	
 public:
 
-	
+	void	UpdateChunks(void);	
 	
 };
 

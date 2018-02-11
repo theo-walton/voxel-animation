@@ -7,7 +7,7 @@ uniform mat4 transform;
 uniform mat4 perspective;
 
 out	BlockData {
-	int exist;
+	int color;
 } Block;
 
 vec4	GenerateVertex(int point, int index)
@@ -16,12 +16,12 @@ vec4	GenerateVertex(int point, int index)
 	index /= 10;
 	float y = index % 10;
 	float z = index / 10;
-	return vec4(x, y, z, 1);
+	return vec4(x - 4.5, y - 4.5, z - 4.5, 1);
 }
 
 void	main()
 {
 	vec4 Vertex = GenerateVertex(point, index);
 	gl_Position = Vertex;
-	Block.exist = point;
+	Block.color = point;
 }
