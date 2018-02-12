@@ -124,6 +124,21 @@ void	VoxelChunk::RemoveHiddenSides(void)
 	}
 }
 
+bool	VoxelChunk::IsBlock(int x, int y, int z)
+{
+	if (x <= -1 || x >= 10 || y <= -1 || y >= 10 || z <= -1 || z >= 10)
+		return false;
+
+	int block = _array[x + y * size + z * size * size];
+
+	block <<= 8; //check to see if the color value is not 0
+	
+	if (!block)
+		return false;
+	return true;
+	
+}
+
 void	VoxelChunk::print(void)
 {
 	for (int i = 0; i < 1000; i++)

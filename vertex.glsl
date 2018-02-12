@@ -7,7 +7,7 @@ uniform mat4 transform;
 uniform mat4 perspective;
 
 out	BlockData {
-	int color;
+	int raw;
 } Block;
 
 vec4	GenerateVertex(int point, int index)
@@ -23,5 +23,5 @@ void	main()
 {
 	vec4 Vertex = GenerateVertex(point, index);
 	gl_Position = Vertex;
-	Block.color = point;
+	Block.raw = point;
 }

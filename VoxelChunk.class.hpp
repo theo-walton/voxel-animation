@@ -14,7 +14,8 @@ private:
 	glm::mat4 _transform;
 	glm::vec3 _pos;
 	
-	
+	void	RemoveHiddenSides(void);
+	bool	IsBlock(int x, int y, int z);
 	
 public:
 
