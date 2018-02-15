@@ -24,7 +24,7 @@ void	VoxRenderer::Render(void)
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CCW);
+	glFrontFace(GL_CW);
 	
 	glGenBuffers(1, &id);
 	glBindBuffer(GL_ARRAY_BUFFER, id);

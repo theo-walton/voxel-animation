@@ -12,9 +12,9 @@ void	main()
 {
 	float nearD = min(min(VertexIn.dis[0], VertexIn.dis[1]), VertexIn.dis[2]);
 
-	if (nearD < 0.1)
+	if (nearD < 0.05)
 	{
-		color = vec3(0, 0, 0);
+		color = vec3(0.3, 0.3, 0.3);
 		return;
 	}
 
