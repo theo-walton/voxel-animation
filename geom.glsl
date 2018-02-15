@@ -13,7 +13,6 @@ in BlockData {
 out VertexData {
 	vec4 normal;
 	vec3 color;
-	vec3 dis;
 } VertexOut;
 
 #define	top     16777216	//0b00000001000000000000000000000000;
@@ -50,25 +49,21 @@ void	main()
 	gl_Position = perspective * transform *	(p + vec4(0, 1, 0, 0));
 	VertexOut.normal = transform * vec4(0, 1, 0, 0);
 	VertexOut.color = vec3(red, green, blue);
-	VertexOut.dis = vec3(0, 1, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 1, 0, 0));
 	VertexOut.normal = transform * vec4(0, 1, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis = vec3(0, 100, 1);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(0, 1, 1, 0));
 	VertexOut.normal = transform * vec4(0, 1, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis = vec3(1, 100, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 1, 1, 0));
 	VertexOut.normal = transform * vec4(0, 1, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis = vec3(0, 1, 0);
 	EmitVertex();
 
 	EndPrimitive();
@@ -83,25 +78,21 @@ void	main()
 	gl_Position = perspective * transform *	(p + vec4(0, 0, 0, 0));
 	VertexOut.normal = transform * vec4(0, -1, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(0, 0, 1, 0));
 	VertexOut.normal = transform * vec4(0, -1, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 100, 1);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 0, 0, 0));
 	VertexOut.normal = transform * vec4(0, -1, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(1, 100, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 0, 1, 0));
 	VertexOut.normal = transform * vec4(0, -1, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	EndPrimitive();
@@ -115,25 +106,21 @@ void	main()
 	gl_Position = perspective * transform *	(p + vec4(0, 1, 0, 0));
 	VertexOut.normal = transform * vec4(-1, 0, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(0, 1, 1, 0));
 	VertexOut.normal = transform * vec4(-1, 0, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 100, 1);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(0, 0, 0, 0));
 	VertexOut.normal = transform * vec4(-1, 0, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(1, 100, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(0, 0, 1, 0));
 	VertexOut.normal = transform * vec4(-1, 0, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	EndPrimitive();
@@ -147,25 +134,21 @@ void	main()
 	gl_Position = perspective * transform *	(p + vec4(1, 1, 0, 0));
 	VertexOut.normal = transform * vec4(1, 0, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 0, 0, 0));
 	VertexOut.normal = transform * vec4(1, 0, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 100, 1);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 1, 1, 0));
 	VertexOut.normal = transform * vec4(1, 0, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(1, 100, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 0, 1, 0));
 	VertexOut.normal = transform * vec4(1, 0, 0, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	EndPrimitive();
@@ -179,25 +162,21 @@ void	main()
 	gl_Position = perspective * transform *	(p + vec4(0, 0, 0, 0));
 	VertexOut.normal = transform * vec4(0, 0, -1, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 0, 0, 0));
 	VertexOut.normal = transform * vec4(0, 0, -1, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 100, 1);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(0, 1, 0, 0));
 	VertexOut.normal = transform * vec4(0, 0, -1, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(1, 100, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 1, 0, 0));
 	VertexOut.normal = transform * vec4(0, 0, -1, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	EndPrimitive();
@@ -211,25 +190,21 @@ void	main()
 	gl_Position = perspective * transform *	(p + vec4(0, 0, 1, 0));
 	VertexOut.normal = transform * vec4(0, 0, 1, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(0, 1, 1, 0));
 	VertexOut.normal = transform * vec4(0, 0, 1, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 100, 1);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 0, 1, 0));
 	VertexOut.normal = transform * vec4(0, 0, 1, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(1, 100, 0);
 	EmitVertex();
 
 	gl_Position = perspective * transform *	(p + vec4(1, 1, 1, 0));
 	VertexOut.normal = transform * vec4(0, 0, 1, 0);
         VertexOut.color	= vec3(red, green, blue);
-	VertexOut.dis =	vec3(0, 1, 0);
 	EmitVertex();
 
 	EndPrimitive();

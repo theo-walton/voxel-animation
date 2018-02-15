@@ -45,6 +45,8 @@ void	VoxelChunk::UseMatrix(glm::mat4 m)
 
 void	VoxelChunk::Load(void)
 {
+	OcclusionRecolor();
+
 	RemoveHiddenSides();
 	
 	glGenBuffers(1, &_bufferID);
@@ -137,6 +139,72 @@ bool	VoxelChunk::IsBlock(int x, int y, int z)
 		return false;
 	return true;
 	
+}
+
+void	VoxelChunk::OcclusionRecolor(void)
+{
+	for (int x = 0; x < 10; x++)
+	{
+		for (int y = 0; y < 10; y++)
+		{
+			for (int z = 0; z < 10; z++)
+			{
+				float exposedSides = 6;
+
+				if (IsBlock(x, y, z))
+				{				
+					if (IsBlock(x + 1, y, z))
+					{
+						exposedSides--;
+					}
+					if (IsBlock(x - 1, y, z))
+					{
+						exposedSides--;
+					}
+					if (IsBlock(x, y + 1, z))
+					{
+						exposedSides--;
+					}
+					if (IsBlock(x, y - 1, z))
+					{
+						exposedSides--;
+					}
+					if (IsBlock(x, y, z + 1))
+					{
+						exposedSides--;
+					}
+					if (IsBlock(x, y, z - 1))
+					{
+						exposedSides--;
+					}
+					ShadeColor(_array[x + y * size + z * size * size],
+						   exposedSides / 6,
+						   0.2);
+				}
+			}
+		}
+	}
+}
+
+void	VoxelChunk::ShadeColor(int &col, float factor, float contrast)
+{
+	float shadeAmount = (factor - 0.5) * contrast * 255;
+
+	float blue = static_cast<float>( col % 256 );
+	float green = static_cast<float>( (col / 256) % 256 );
+	float red = static_cast<float>( (col / (256 * 256)) % 256 );
+
+	std::cout << shadeAmount << std::endl;
+	
+	blue += shadeAmount;
+	green += shadeAmount;
+	red += shadeAmount;
+	
+	int iblue = std::max(0.0f, std::min(blue, 255.0f));
+	int igreen = std::max(0.0f, std::min(green, 255.0f));
+	int ired = std::max(0.0f, std::min(red, 255.0f));
+	
+	col = iblue + igreen * 256 + ired * 256 * 256;
 }
 
 void	VoxelChunk::print(void)

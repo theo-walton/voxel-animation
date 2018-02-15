@@ -13,9 +13,13 @@ private:
 	GLint _array[size * size * size] = {};		
 	glm::mat4 _transform;
 	glm::vec3 _pos;
-	
+
 	void	RemoveHiddenSides(void);
-	bool	IsBlock(int x, int y, int z);
+	void	OcclusionRecolor(void);
+	void	ShadeColor(int &col, float factor, float contrast);
+
+	
+	bool	IsBlock(int x, int y, int z);	
 	
 public:
 
