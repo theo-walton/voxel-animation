@@ -6,10 +6,10 @@
 class	Camera
 {
 private:
-	
+
+	Time _time;
 	glm::mat4 _transform;
 	Window *_window;
-	double _time;
 	bool _cameraShouldMove;
 	
 public:

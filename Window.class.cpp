@@ -29,6 +29,7 @@ Window::Window(int x, int y, std::string name)
 void	Window::WindowHints(void)
 {
 	glfwDefaultWindowHints();
+	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);

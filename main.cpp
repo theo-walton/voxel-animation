@@ -21,13 +21,7 @@ int	main(int ac, char **av)
 		return (1);
 	
 	Window window(X_DIM, Y_DIM, NAME);
-	ShadingProgram program("vertex.glsl",
-			       "geom.glsl",
-			       "frag.glsl");
 	Camera camera;
-
-	program.Use();
-
 
         if (glGetError() !=GL_NO_ERROR)
                 std::cerr << "FAIL\n";
@@ -41,15 +35,19 @@ int	main(int ac, char **av)
 	
 	camera.TrackEvents(&window);
 
-	VoxRenderer renderer(program);
-	VoxObject test(av[1]);
+	VoxRenderer renderer;
+
+	for (int i = 0; i < 1000; i++)
+	{		       
+		VoxObject *test = new VoxObject(av[1]);
 	
-	test.Load();
-	renderer.AttachObject(&test);
+		test->Load();
+		renderer.AttachObject(test);
 	
-	test.SetPos(glm::vec3(0, 0, 100));
-	test.SetTransform(glm::rotate(glm::radians(90.0f), glm::vec3(0, 1.0f, 0)));
-	
+		test->SetPos(glm::vec3(((i / 50) % 50) * 25, (i % 50) * 25, 500));
+		test->SetTransform(glm::rotate(glm::radians(30.0f), glm::vec3(0, 1.0f, 0)));
+	}
+
 	while (window.IsOpen())
 	{
 		window.Clear();
@@ -57,7 +55,6 @@ int	main(int ac, char **av)
 		if (camera.JustMoved())
 		{
 			renderer.NewPerspective(camera.Perspective());
-			renderer.UsePerspective();
 		}
 		renderer.Render();
 		window.Update();
@@ -69,6 +66,4 @@ int	main(int ac, char **av)
 			std::cerr << "OpenGL error: " << err << std::endl;
 		}
 	}
-
-
 }

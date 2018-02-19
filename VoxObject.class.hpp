@@ -21,7 +21,8 @@ class	VoxObject
 	};
 
 private:
-	
+
+	Time _time;
 	std::vector<AnimatedChunk> _parts;
 	float _totalTime;
 	GLuint _transformID;
@@ -48,6 +49,7 @@ private:
 public:
 
 	VoxObject(std::string filepath);
+	virtual ~VoxObject(void);
 	
 	GLuint	&TransformID(void);
 	void	Render(void);
@@ -58,26 +60,8 @@ public:
         glm::mat4       GetTransform(void);
         void    SetPos(glm::vec3);
         glm::vec3       GetPos(void);
-
-
-	
-//these functions should not be used	
-#ifdef _VOXOBJECT_EDITOR
-/**/	
-/**/	int	TotalParts(void);
-/**/	int	TotalAnima(int part);
-/**/	
-/**/	void	Rotate(glm::vec3 axis, float angle, int part, int index);
-/**/	void	Move(glm::vec3 amount, int part, int index);
-#endif
-	
-//same for these functions	
-#ifdef _VOXOBJECT_DEBUG
-/**/	
-/**/	void	print(void);
-/**/
-#endif
-	
+	void	Move(glm::vec3);
+		
 };
 
 #endif

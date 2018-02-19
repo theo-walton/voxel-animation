@@ -178,6 +178,14 @@ VoxObject::VoxObject(std::string filepath)
 		_parts.push_back( getAnimatedChunk(format) );
 }
 
+VoxObject::~VoxObject(void)
+{
+	for (int i = 0; i < _parts.size(); i++)
+	{
+		delete _parts[i].chunk;
+	}
+}
+
 GLuint	&VoxObject::TransformID(void)
 {
 	return _transformID;
@@ -223,6 +231,8 @@ glm::mat4	VoxObject::ExtrapolateMatrix(AnimatedChunk part)
 
 void	VoxObject::Render(void)
 {
+	_time.Fix();
+	
 	for (int i = 0; i < _parts.size(); i++)
 	{
 
@@ -241,7 +251,7 @@ void	VoxObject::Render(void)
 
 		_parts[i].chunk->Render();
 	}
-	_totalTime += 0.01;
+	_totalTime += _time.GetDeltaTime();
 }
 
 void	VoxObject::Load(void)
@@ -280,52 +290,7 @@ glm::vec3       VoxObject::GetPos(void)
         return _pos;
 }
 
-//ALL FUNCTIONS FROM HERE ONWARDS SHOULD NOT BE USED UNLESS YOU REALLY
-//KNOW WHAT YOU ARE DOING
-
-//DO NOT DEFINE UNLESS YOU PLAN TO USE THESE FUNCTIONS
-
-#ifdef _VOXOBJECT_EDITOR
-
-int	VoxObject::TotalParts(void)
+void	VoxObject::Move(glm::vec3 v)
 {
-	return _parts.size();
+	_pos += v;
 }
-
-int	VoxObject::TotalAnima(int part)
-{
-	return _parts[part].animaTime.size();
-}
-
-void	VoxObject::Rotate(glm::vec3 axis, float angle, int part, int index)
-{
-	glm::mat4 &m = _parts[part].animaTransform[index];
-	glm::vec4 p = m * glm::vec4(0, 0, 0, 1);	
-	glm::mat4 translate = glm::translate(glm::vec3(p));
-	glm::mat4 rotate = glm::rotate(glm::radians(angle), axis);
-
-	m = translate * rotate * -translate * m;
-}
-
-void	VoxObject::Move(glm::vec3 amount, int part, int index)
-{
-	glm::mat4 &m = _parts[part].animaTransform[index];
-	glm::mat4 translate = glm::translate(amount);
-
-	m = translate * m;
-}
-
-#endif
-
-#ifdef _VOXOBJECT_DEBUG
-
-void	VoxObject::print(void)
-{
-	for (int i = 0; i < _parts.size(); i++)
-	{
-		_parts[i].chunk->print();
-		std::cout << std::endl << std::endl << std::endl;
-	}
-}
-
-#endif

@@ -1,15 +1,11 @@
 
 #include "voxGL.hpp"
 
-VoxRenderer::VoxRenderer(ShadingProgram &program) : _program(program)
+VoxRenderer::VoxRenderer(void)
 {
-	_perspectiveID = glGetUniformLocation(program.ID(), "perspective");
-	_transformID = glGetUniformLocation(program.ID(), "transform");
-
-	for (int i = 0; i < 1000; i++)
-	{
-		_numlist[i] = i;
-	}
+	_program = new ShadingProgram(VERTEX_PATH, "", FRAG_PATH);
+	_perspectiveID = glGetUniformLocation(_program->ID(), "perspective");
+	_transformID = glGetUniformLocation(_program->ID(), "transform");
 }
 
 void	VoxRenderer::AttachObject(VoxObject *object)
@@ -18,37 +14,36 @@ void	VoxRenderer::AttachObject(VoxObject *object)
 	object->TransformID() = _transformID;
 }
 
+void	VoxRenderer::DetachObject(VoxObject *object)
+{
+	for (int i = 0; i < _objects.size(); i++)
+	{
+		if (object == _objects[i])
+		{
+			_objects.erase(_objects.begin() + i);
+			return;
+		}
+	}
+}
+
 void	VoxRenderer::Render(void)
 {
-	GLuint id;
-
+	_program->Use();
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
 	glFrontFace(GL_CW);
 	
-	glGenBuffers(1, &id);
-	glBindBuffer(GL_ARRAY_BUFFER, id);
-	glBufferData(GL_ARRAY_BUFFER,
-		     sizeof(GLint) * 1000,
-		     _numlist,
-		     GL_STATIC_DRAW);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 1, GL_INT, GL_FALSE, 0, 0);
-
 	for (int i = 0; i < _objects.size(); i++)
 	{
 		_objects[i]->Render();
 	}
-	glDisableVertexAttribArray(1);
 }
 
 void	VoxRenderer::NewPerspective(glm::mat4 m)
 {
+	_program->Use();
+	
 	_perspective = m;
-}
-
-void	VoxRenderer::UsePerspective(void)
-{
 	glUniformMatrix4fv(_perspectiveID,
 			   1,
 			   GL_FALSE,

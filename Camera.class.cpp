@@ -8,8 +8,7 @@ glm::vec3 const	Camera::Right;
 
 Camera::Camera(void) : _cameraShouldMove(true)
 {
-	auto timestamp = std::chrono::high_resolution_clock::now();
-//	_time = std::chrono::time_point<double, std::nano>(timestamp).count();
+	_transform = glm::mat4(1);
 }
 
 glm::mat4	Camera::Perspective(void)
@@ -46,59 +45,48 @@ void	Camera::TrackEvents(Window *window)
 
 void	Camera::Update(void)
 {
-	auto timestamp = std::chrono::high_resolution_clock::now();
-	
-	double time = 0;//std::chrono::time_point_cast<std::chrono::seconds>(timestamp);
-	double deltaTime = 0.1;//time - _time;
-
+	_time.Fix();
 
 	if (_window->IsForward())
 	{
-		Move(Forward * deltaTime);
+		Move(Forward * _time.GetDeltaTime() * 10);
 	}
 	if (_window->IsBackward())
 	{
-		Move(-Forward * deltaTime);
+		Move(-Forward * _time.GetDeltaTime() * 10);
 	}
 	if (_window->IsLeft())
 	{
-		Move(-Right * deltaTime);
+		Move(-Right * _time.GetDeltaTime() * 10);
 	}
 	if (_window->IsRight())
 	{
-		Move(Right * deltaTime);
+		Move(Right * _time.GetDeltaTime() * 10);
 	}
 	if (_window->IsUp())
 	{
-		Move(Up * deltaTime);		
+		Move(Up * _time.GetDeltaTime() * 10);		
 	}
 	if (_window->IsDown())
 	{
-		Move(-Up * deltaTime);
+		Move(-Up * _time.GetDeltaTime() * 10);
 	}
 	if (_window->KeyOn('N'))
 	{
-		Rotate(glm::vec3(0, 0, -1), 0.5);
+		Rotate(glm::vec3(0, -1, 0), _time.GetDeltaTime() * 10);
 	}
 	if (_window->KeyOn('M'))
 	{
-		Rotate(glm::vec3(0, 0, 1), 0.5);
+		Rotate(glm::vec3(0, 1, 0), _time.GetDeltaTime() * 10);
 	}
 	if (_window->KeyOn('J'))
 	{
-		Rotate(glm::vec3(0, -1, 0), 0.5);
+		Rotate(glm::vec3(-1, 0, 0), _time.GetDeltaTime() * 10);
 	}
 	if (_window->KeyOn('K'))
 	{
-		Rotate(glm::vec3(0, 1, 0), 0.5);
+		Rotate(glm::vec3(1, 0, 0), _time.GetDeltaTime() * 10);
 	}
-	
-	if (_cameraShouldMove)
-	{
-		
-	}
-	
-	_time = time;
 }
 
 bool	Camera::JustMoved(void)

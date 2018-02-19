@@ -9,14 +9,27 @@ private:
 
 	static const int size = 10;
 
-	GLuint _bufferID;
-	GLint _array[size * size * size] = {};		
+	static const int top =         0b00000001000000000000000000000000;
+	static const int bot =         0b00000010000000000000000000000000;
+	static const int left =        0b00000100000000000000000000000000;
+	static const int right =       0b00001000000000000000000000000000;
+	static const int front =       0b00010000000000000000000000000000;
+	static const int back =        0b00100000000000000000000000000000;
+	
+	GLuint _triangleBufferID;
+	GLuint _normalBufferID;
+	GLuint _colorBufferID;
+	GLint _array[size * size * size] = {};
+	std::vector<GLfloat> _triangles;
+	std::vector<GLfloat> _normals;
+	std::vector<GLfloat> _colors;
 	glm::mat4 _transform;
 	glm::vec3 _pos;
 
 	void	RemoveHiddenSides(void);
 	void	OcclusionRecolor(void);
 	void	ShadeColor(int &col, float factor, float contrast);
+	void	GetTriangleData(void);
 
 	
 	bool	IsBlock(int x, int y, int z);	

@@ -48,28 +48,59 @@ void	VoxelChunk::Load(void)
 	OcclusionRecolor();
 
 	RemoveHiddenSides();
+
+	GetTriangleData();
 	
-	glGenBuffers(1, &_bufferID);
-	glBindBuffer(GL_ARRAY_BUFFER, _bufferID);
+	glGenBuffers(1, &_triangleBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleBufferID);
 	glBufferData(GL_ARRAY_BUFFER,
-		     sizeof(GLint) * size * size * size,
-		     _array,
+		     sizeof(GLfloat) * _triangles.size(),
+		     &_triangles[0],
 		     GL_STATIC_DRAW);
+
+	glGenBuffers(1, &_normalBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, _normalBufferID);
+	glBufferData(GL_ARRAY_BUFFER,
+		     sizeof(GLfloat) * _normals.size(),
+		     &_normals[0],
+		     GL_STATIC_DRAW);
+
+	glGenBuffers(1, &_colorBufferID);
+	glBindBuffer(GL_ARRAY_BUFFER, _colorBufferID);
+	glBufferData(GL_ARRAY_BUFFER,
+		     sizeof(GLfloat) * _colors.size(),
+		     &_colors[0],
+		     GL_STATIC_DRAW);
+
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 void	VoxelChunk::Render(void)
 {
-	glBindBuffer(GL_ARRAY_BUFFER, _bufferID);
-	glEnableVertexAttribArray(0); // maybe change 0 to var in future
-	glVertexAttribPointer(0, 1, GL_INT, GL_FALSE, 0, 0);
-	glDrawArrays(GL_POINTS, 0, size * size * size);
+	glBindBuffer(GL_ARRAY_BUFFER, _triangleBufferID);	
+	glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, _normalBufferID);
+	glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, _colorBufferID);	
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	
+	glDrawArrays(GL_TRIANGLES, 0, _triangles.size() / 3);
+	
 	glDisableVertexAttribArray(0);
+	glDisableVertexAttribArray(1);
+	glDisableVertexAttribArray(2);
 }
 
 void	VoxelChunk::Unload(void)
 {
-	glDeleteBuffers(1, &_bufferID);
+	glDeleteBuffers(1, &_triangleBufferID);
+	glDeleteBuffers(1, &_normalBufferID);
+	glDeleteBuffers(1, &_colorBufferID);
 }
 
 glm::mat4	&VoxelChunk::GetTransform(void)
@@ -84,13 +115,6 @@ glm::vec3	VoxelChunk::Pos(void)
 
 void	VoxelChunk::RemoveHiddenSides(void)
 {
-	const int top =		0b00000001000000000000000000000000;
-	const int bot =		0b00000010000000000000000000000000;
-	const int left =	0b00000100000000000000000000000000;
-	const int right =	0b00001000000000000000000000000000;
-	const int front =	0b00010000000000000000000000000000;
-	const int back =	0b00100000000000000000000000000000;
-
 	for (int x = 0; x < 10; x++)
 	{
 		for (int y = 0; y < 10; y++)
@@ -193,8 +217,6 @@ void	VoxelChunk::ShadeColor(int &col, float factor, float contrast)
 	float blue = static_cast<float>( col % 256 );
 	float green = static_cast<float>( (col / 256) % 256 );
 	float red = static_cast<float>( (col / (256 * 256)) % 256 );
-
-	std::cout << shadeAmount << std::endl;
 	
 	blue += shadeAmount;
 	green += shadeAmount;
@@ -207,20 +229,191 @@ void	VoxelChunk::ShadeColor(int &col, float factor, float contrast)
 	col = iblue + igreen * 256 + ired * 256 * 256;
 }
 
+void	VoxelChunk::GetTriangleData(void)
+{
+
+	glm::vec3 vtop = {0, 1, 0};
+	glm::vec3 vbot = {0, -1, 0};
+	glm::vec3 vleft = {-1, 0, 0};
+	glm::vec3 vright = {1, 0, 0};
+	glm::vec3 vfront = {0, -1, 0};
+	glm::vec3 vback = {0, 1, 0};
+			  
+	
+	for (int i = 0; i < size * size * size; i++)
+	{
+		if (!IsBlock(i % 10, (i / 10) % 10, (i / 100) % 10))
+			continue;
+		glm::vec3 p;
+
+		p.x = i % 10 - 4.5;
+		p.y = (i / 10) % 10 - 4.5;
+		p.z = (i / 100) % 10 - 4.5;
+
+		glm::vec3 v000 = p + glm::vec3(0, 0, 0);
+		glm::vec3 v001 = p + glm::vec3(0, 0, 1);
+		glm::vec3 v010 = p + glm::vec3(0, 1, 0);
+		glm::vec3 v011 = p + glm::vec3(0, 1, 1);
+		glm::vec3 v100 = p + glm::vec3(1, 0, 0);
+		glm::vec3 v101 = p + glm::vec3(1, 0, 1);
+		glm::vec3 v110 = p + glm::vec3(1, 1, 0);
+		glm::vec3 v111 = p + glm::vec3(1, 1, 1);
+
+		glm::vec3 col = { static_cast<float>( ((_array[i] / (256 * 256)) % 256 )) / 255,
+				  static_cast<float>( ((_array[i] / 256) % 256 )) / 255,
+				  static_cast<float>( (_array[i] % 256 )) / 255 };
+
+//		glm::vec3 col = {1, 1, 1};
+		
+		if (!(_array[i] & top))
+		{
+			_triangles.insert(_triangles.end(), &v010.x, &v010.x + 3);
+			_triangles.insert(_triangles.end(), &v110.x, &v110.x + 3);
+			_triangles.insert(_triangles.end(), &v011.x, &v011.x + 3);
+			_triangles.insert(_triangles.end(), &v110.x, &v110.x + 3);
+			_triangles.insert(_triangles.end(), &v111.x, &v111.x + 3);
+			_triangles.insert(_triangles.end(), &v011.x, &v011.x + 3);
+			
+			_normals.insert(_normals.end(), &vtop.x, &vtop.x + 3);
+			_normals.insert(_normals.end(), &vtop.x, &vtop.x + 3);
+			_normals.insert(_normals.end(), &vtop.x, &vtop.x + 3);
+                        _normals.insert(_normals.end(), &vtop.x, &vtop.x + 3);
+			_normals.insert(_normals.end(), &vtop.x, &vtop.x + 3);
+                        _normals.insert(_normals.end(), &vtop.x, &vtop.x + 3);
+			
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+		}
+		if (!(_array[i] & bot))
+		{
+			_triangles.insert(_triangles.end(), &v000.x, &v000.x + 3);
+			_triangles.insert(_triangles.end(), &v001.x, &v001.x + 3);
+			_triangles.insert(_triangles.end(), &v100.x, &v100.x + 3);
+			_triangles.insert(_triangles.end(), &v001.x, &v001.x + 3);
+			_triangles.insert(_triangles.end(), &v101.x, &v101.x + 3);
+			_triangles.insert(_triangles.end(), &v100.x, &v100.x + 3);
+			
+			_normals.insert(_normals.end(), &vbot.x, &vbot.x + 3);
+			_normals.insert(_normals.end(), &vbot.x, &vbot.x + 3);
+			_normals.insert(_normals.end(), &vbot.x, &vbot.x + 3);
+                        _normals.insert(_normals.end(), &vbot.x, &vbot.x + 3);
+			_normals.insert(_normals.end(), &vbot.x, &vbot.x + 3);
+                        _normals.insert(_normals.end(), &vbot.x, &vbot.x + 3);
+			
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+		}
+		if (!(_array[i] & left))
+		{
+			_triangles.insert(_triangles.end(), &v010.x, &v010.x + 3);
+			_triangles.insert(_triangles.end(), &v011.x, &v011.x + 3);
+			_triangles.insert(_triangles.end(), &v000.x, &v000.x + 3);
+			_triangles.insert(_triangles.end(), &v011.x, &v011.x + 3);
+			_triangles.insert(_triangles.end(), &v001.x, &v001.x + 3);
+			_triangles.insert(_triangles.end(), &v000.x, &v000.x + 3);
+			
+			_normals.insert(_normals.end(), &vleft.x, &vleft.x + 3);
+			_normals.insert(_normals.end(), &vleft.x, &vleft.x + 3);
+			_normals.insert(_normals.end(), &vleft.x, &vleft.x + 3);
+                        _normals.insert(_normals.end(), &vleft.x, &vleft.x + 3);
+			_normals.insert(_normals.end(), &vleft.x, &vleft.x + 3);
+                        _normals.insert(_normals.end(), &vleft.x, &vleft.x + 3);
+			
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+		}
+		if (!(_array[i] & right))
+		{
+			_triangles.insert(_triangles.end(), &v110.x, &v110.x + 3);
+			_triangles.insert(_triangles.end(), &v100.x, &v100.x + 3);
+			_triangles.insert(_triangles.end(), &v111.x, &v111.x + 3);
+			_triangles.insert(_triangles.end(), &v100.x, &v100.x + 3);
+			_triangles.insert(_triangles.end(), &v101.x, &v101.x + 3);
+			_triangles.insert(_triangles.end(), &v111.x, &v111.x + 3);
+			
+			_normals.insert(_normals.end(), &vright.x, &vright.x + 3);
+			_normals.insert(_normals.end(), &vright.x, &vright.x + 3);
+			_normals.insert(_normals.end(), &vright.x, &vright.x + 3);
+                        _normals.insert(_normals.end(), &vright.x, &vright.x + 3);
+			_normals.insert(_normals.end(), &vright.x, &vright.x + 3);
+                        _normals.insert(_normals.end(), &vright.x, &vright.x + 3);
+			
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+		}
+		if (!(_array[i] & front))
+		{
+			_triangles.insert(_triangles.end(), &v000.x, &v000.x + 3);
+			_triangles.insert(_triangles.end(), &v100.x, &v100.x + 3);
+			_triangles.insert(_triangles.end(), &v010.x, &v010.x + 3);
+			_triangles.insert(_triangles.end(), &v100.x, &v100.x + 3);
+			_triangles.insert(_triangles.end(), &v110.x, &v110.x + 3);
+			_triangles.insert(_triangles.end(), &v010.x, &v010.x + 3);
+			
+			_normals.insert(_normals.end(), &vfront.x, &vfront.x + 3);
+			_normals.insert(_normals.end(), &vfront.x, &vfront.x + 3);
+			_normals.insert(_normals.end(), &vfront.x, &vfront.x + 3);
+                        _normals.insert(_normals.end(), &vfront.x, &vfront.x + 3);
+			_normals.insert(_normals.end(), &vfront.x, &vfront.x + 3);
+                        _normals.insert(_normals.end(), &vfront.x, &vfront.x + 3);
+			
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+		}
+		if (!(_array[i] & back))
+		{
+			_triangles.insert(_triangles.end(), &v001.x, &v001.x + 3);
+			_triangles.insert(_triangles.end(), &v011.x, &v011.x + 3);
+			_triangles.insert(_triangles.end(), &v101.x, &v101.x + 3);
+			_triangles.insert(_triangles.end(), &v011.x, &v011.x + 3);
+			_triangles.insert(_triangles.end(), &v111.x, &v111.x + 3);
+			_triangles.insert(_triangles.end(), &v101.x, &v101.x + 3);
+			
+			_normals.insert(_normals.end(), &vback.x, &vback.x + 3);
+			_normals.insert(_normals.end(), &vback.x, &vback.x + 3);
+			_normals.insert(_normals.end(), &vback.x, &vback.x + 3);
+                        _normals.insert(_normals.end(), &vback.x, &vback.x + 3);
+			_normals.insert(_normals.end(), &vback.x, &vback.x + 3);
+                        _normals.insert(_normals.end(), &vback.x, &vback.x + 3);
+			
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+			_colors.insert(_colors.end(), &col.x, &col.x + 3);
+                        _colors.insert(_colors.end(), &col.x, &col.x + 3);
+		}
+	}
+}
+
 void	VoxelChunk::print(void)
 {
-	for (int i = 0; i < 1000; i++)
+	for (int i = 0; i < _triangles.size(); i++)
 	{
-		std::cout << _array[i] << " ";
-	}
-
-	std::cout << std::endl << "matrix:" << std::endl;
-	for (int i = 0; i < 4; i++)
-	{
-		for (int j = 0; j < 4; j++)
-		{
-			std::cout << _transform[i][j] << " ";
-		}
-		std::cout << std::endl;
+		if (i % 3 == 0)
+			std::cout << std::endl;
+		if (i % 9 == 0)
+			std::cout << std::endl;
+		std::cout << _triangles[i] << " ";
 	}
 }

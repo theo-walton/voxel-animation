@@ -1,27 +1,21 @@
 #version 410 core
 
-layout(location = 0) in int point;
-layout(location = 1) in int index;
+layout(location = 0) in vec3 vertex;
+layout(location = 1) in vec3 normal;
+layout(location = 2) in vec3 color;
 
 uniform mat4 transform;
 uniform mat4 perspective;
 
-out	BlockData {
-	int raw;
-} Block;
-
-vec4	GenerateVertex(int point, int index)
-{
-	float x = index % 10;
-	index /= 10;
-	float y = index % 10;
-	float z = index / 10;
-	return vec4(x - 4.5, y - 4.5, z - 4.5, 1);
-}
+out	ShapeData {
+	vec3 color;
+} Data;
 
 void	main()
 {
-	vec4 Vertex = GenerateVertex(point, index);
-	gl_Position = Vertex;
-	Block.raw = point;
+	float dot = max( dot( normalize(transform * vec4(normal, 0)),
+	normalize(vec4(-1, -2, -3, 0)) ), 0.1 );
+
+	gl_Position = perspective * transform * vec4(vertex, 1);
+	Data.color = color * dot;
 }
