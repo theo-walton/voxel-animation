@@ -1,19 +1,6 @@
 
 #include "voxGL.hpp"
 
-int	chunkFun(int index, int size)
-{
-	int x = index % 10 - 5;
-	index /= 10;
-	int y = index % 10 - 5;
-	index /= 10;
-	int z = index % 10 - 5;
-
-	if (x * x + y * y + z * z < 4 * 4)
-		return 1;
-	return 0;
-}
-
 int	main(int ac, char **av)
 {
 
@@ -37,15 +24,17 @@ int	main(int ac, char **av)
 
 	VoxRenderer renderer;
 
-	for (int i = 0; i < 1000; i++)
-	{		       
-		VoxObject *test = new VoxObject(av[1]);
+	glClearColor(0.20, 0.25, 0.29, 1);
+
+	for (int i = 1; i < ac; i++)
+	{
+	
+		VoxObject *test = new VoxObject(av[i]);
 	
 		test->Load();
 		renderer.AttachObject(test);
 	
-		test->SetPos(glm::vec3(((i / 50) % 50) * 25, (i % 50) * 25, 500));
-		test->SetTransform(glm::rotate(glm::radians(30.0f), glm::vec3(0, 1.0f, 0)));
+		test->SetPos(glm::vec3((i - 1) * 20, 0, 100));
 	}
 
 	while (window.IsOpen())
