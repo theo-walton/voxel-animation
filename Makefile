@@ -5,9 +5,9 @@ SRC = *.cpp
 
 FRAMEWORKS = -framework OpenGl
 
-GLFW_INC = -I /nfs/2017/t/twalton/.brew/include
+GLFW_INC = -I ~/.brew/include
 
-GLFW_LINK = -L/nfs/2017/t/twalton/.brew/lib -lglfw
+GLFW_LINK = -L ~/.brew/lib -lglfw
 
 MY_INC = -I .
 
