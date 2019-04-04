@@ -1,12 +1,11 @@
 # VoxelEngine
-starting with basics of voxels and ill see how far I get
 
-Current status:
+Renders animated voxel objects from infomation in a file.
 
-Draws voxel chunks (10x10x10 voxels) that are attached to a voxelmap but they have to be manually added for the moment.
+each voxel object is made of one or more voxel chunks, each with its own animation.
 
-Currently a graphical bug with shape boundaries.
+An animation is defined as a matrix (that is applied to the voxel object) and a time that this transformation should occur in each cycle. Each frame the animation matrices are linearly interpolated to make sure the transition is smooth.
 
-Voxel chunk can be constructed with function pointer to define what it looks like.
+see the main.cpp for the basic process of drawing a voxObject
 
-![alt text](https://raw.githubusercontent.com/theo-walton/VoxelEngine/master/images/voxelSphere)
+![alt text](https://raw.githubusercontent.com/theo-walton/VoxelEngine/master/images/voxel_moving_6.gif)
